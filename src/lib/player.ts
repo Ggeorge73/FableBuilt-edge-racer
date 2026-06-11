@@ -12,11 +12,10 @@ export async function getPlayerProfile(): Promise<PlayerProfile> {
   }
 
   // Generate new profile
-  const id =
-    'player_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
+  const id = 'player_' + Math.random().toString(36).substring(2, 10) + Date.now().toString(36);
   let country = 'Unknown';
   let countryCode = 'UN';
-
+  
   try {
     const res = await fetch('https://get.geojs.io/v1/ip/country.json');
     if (res.ok) {
@@ -25,14 +24,14 @@ export async function getPlayerProfile(): Promise<PlayerProfile> {
       country = data.name;
     }
   } catch (error) {
-    console.warn('Could not determine country', error);
+    console.warn("Could not determine country", error);
   }
 
   const profile: PlayerProfile = {
     id,
     name: 'Racer_' + id.substring(7, 11),
     country,
-    countryCode,
+    countryCode
   };
 
   localStorage.setItem('endlessRacerProfile', JSON.stringify(profile));

@@ -1,25 +1,6 @@
 import { initializeApp } from 'firebase/app';
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  query,
-  orderBy,
-  limit,
-  doc,
-  setDoc,
-  getDoc,
-  getCountFromServer,
-  increment,
-  where,
-} from 'firebase/firestore';
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut as fbSignOut,
-  onAuthStateChanged,
-} from 'firebase/auth';
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, doc, setDoc, getDoc, getCountFromServer, increment, where } from 'firebase/firestore';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -29,7 +10,7 @@ const firebaseConfig = {
   storageBucket: "gcc-sae.firebasestorage.app",
   messagingSenderId: "11093208087",
   appId: "1:11093208087:web:2972e4659049f7707f4052",
-  measurementId: "G-VB8J130T1R",
+  measurementId: "G-VB8J130T1R"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -43,16 +24,11 @@ export interface LeaderboardEntry {
   updatedAt: number;
 }
 
-export async function submitScore(
-  playerId: string,
-  distance: number,
-  country: string,
-  countryCode: string,
-) {
+export async function submitScore(playerId: string, distance: number, country: string, countryCode: string) {
   try {
     const playerRef = doc(db, 'leaderboard', playerId);
     const playerDoc = await getDoc(playerRef);
-
+    
     if (playerDoc.exists()) {
       const data = playerDoc.data() as LeaderboardEntry;
       if (distance > data.distance) {
@@ -61,7 +37,7 @@ export async function submitScore(
           distance,
           country,
           countryCode,
-          updatedAt: Date.now(),
+          updatedAt: Date.now()
         });
       }
     } else {
@@ -70,43 +46,36 @@ export async function submitScore(
         distance,
         country,
         countryCode,
-        updatedAt: Date.now(),
+        updatedAt: Date.now()
       });
     }
   } catch (error) {
-    console.error('Failed to submit score:', error);
+    console.error("Failed to submit score:", error);
   }
 }
 
 export async function getTopGlobal(count = 10): Promise<LeaderboardEntry[]> {
   const q = query(collection(db, 'leaderboard'), orderBy('distance', 'desc'), limit(count));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => d.data() as LeaderboardEntry);
+  return snapshot.docs.map(doc => doc.data() as LeaderboardEntry);
 }
 
 export async function getTopCountry(countryCode: string, count = 10): Promise<LeaderboardEntry[]> {
-  const q = query(
-    collection(db, 'leaderboard'),
-    where('countryCode', '==', countryCode),
-    orderBy('distance', 'desc'),
-    limit(count),
-  );
+  const q = query(collection(db, 'leaderboard'), where('countryCode', '==', countryCode), orderBy('distance', 'desc'), limit(count));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => d.data() as LeaderboardEntry);
+  return snapshot.docs.map(doc => doc.data() as LeaderboardEntry);
 }
 
 export async function getPlayerRank(distance: number, countryCode?: string): Promise<number> {
   let q = query(collection(db, 'leaderboard'), where('distance', '>', distance));
   if (countryCode) {
-    q = query(
-      collection(db, 'leaderboard'),
-      where('countryCode', '==', countryCode),
-      where('distance', '>', distance),
-    );
+    q = query(collection(db, 'leaderboard'), where('countryCode', '==', countryCode), where('distance', '>', distance));
   }
   const snapshot = await getCountFromServer(q);
   return snapshot.data().count + 1;
 }
+
+
 
 // ---------------------------------------------------------------------------
 // Authentication
@@ -140,7 +109,7 @@ export interface GameProgress {
 
 export async function saveProgress(
   uid: string,
-  progress: Omit<GameProgress, 'totalRaces'>,
+  progress: Omit<GameProgress, 'totalRaces'>
 ): Promise<void> {
   const ref = doc(db, 'userProgress', uid);
   // totalRaces is incremented atomically on the server so concurrent

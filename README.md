@@ -1,56 +1,20 @@
-# Edge Racer — Realms of Light
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-A full rebuild of Edge Racer with the look and feel of *Sky: Children of the Light*.
-You pilot a glowing light-craft along a luminous ribbon of road suspended above an
-endless cloud sea. The road winds, narrows, and shifts — and the edge is death.
+# Run and deploy your AI Studio app
 
-## The game
+This contains everything you need to run your app locally.
 
-Everything from the original Edge Racer is here, re-imagined:
+View your app in AI Studio: https://ai.studio/apps/f25e4906-37ec-41ee-9ac9-1abbfa2ffa43
 
-| Original | Realms of Light |
-| --- | --- |
-| Car | Winged light-craft with flowing trail |
-| Off-road = crash | Off the edge = the long fall into the cloud sea |
-| Bump / Shield / Saw pickups | **Gust** / **Aura** / **Shard** charms |
-| Rocks, oil, barrels, puddles | Dark crystals, void pools, storm cores, mist pools |
-| Rain / fog weather | Rain of light / the veil thickens |
-| Grassland → desert → glacier | Aurora Meadow → Golden Wastes → Frost Veil → Eden Storm |
-| Taunts | Spirit whispers |
-| Median-line penalty | The silver thread takes its toll |
-| Firebase leaderboard + Google sign-in | Retained, restyled |
+## Run Locally
 
-## Tech
+**Prerequisites:**  Node.js
 
-- React 19 + TypeScript + Vite
-- Three.js WebGL: gradient sky-dome shader, procedural cloud-sea shader,
-  dynamic road-ribbon mesh, particle bursts, ambient motes, rain,
-  floating islands, UnrealBloom postprocessing, banking chase camera
-- Pure WebAudio ambient soundscape (no audio files): evolving pad, wind that
-  rises near the edge, pentatonic chimes, soft impacts, a falling sigh
-- Firebase (Firestore + Google auth) for the global/country leaderboard
-  and cloud progress
 
-## Run
-
-```bash
-npm install
-npm run dev      # http://localhost:3000
-npm run build    # production build
-npm run lint     # typecheck
-```
-
-## Controls
-
-- **← → / A D** — glide left and right
-- **↑ ↓ / W S** — surge forward and ease back
-- **Space** — release your charm (weapon)
-- **P / Esc** — stillness (pause) · **M** — mute
-- **Touch** — drag anywhere to steer, tap the charm ring to release it
-
-## Notes
-
-- The title screen runs a live attract-mode flight behind the menu.
-- Realm palettes cross-fade slowly as you ascend (every 2 levels).
-- Firestore rules are in `firestore.rules`; the country leaderboard needs a
-  composite index (`countryCode` asc, `distance` desc) in Firebase Console.
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`
