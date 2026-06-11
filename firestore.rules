@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidEntry(playerId) {
+      return request.resource.data.keys().hasOnly(
+               ['playerId', 'distance', 'country', 'countryCode', 'updatedAt'])
+             && request.resource.data.playerId is string
+             && request.resource.data.playerId == playerId
+             && request.resource.data.distance is number
+             && request.resource.data.distance >= 0
+             && request.resource.data.country is string
+             && request.resource.data.country.size() <= 100
+             && request.resource.data.countryCode is string
+             && request.resource.data.countryCode.size() <= 8
+             && request.resource.data.updatedAt is number;
+    }
+
+    // Public leaderboard. Anyone may read scores. Writes are restricted to
+    // the 'leaderboard' collection and must match the expected schema.
+    match /leaderboard/{playerId} {
+      allow read: if true;
+      allow create, update: if isValidEntry(playerId);
+      allow delete: if false;
+    }
+
+    // Per-user game progress. Only the signed-in owner may read or write
+    // their own document (document id must equal their auth uid).
+    match /userProgress/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // Deny everything else.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
