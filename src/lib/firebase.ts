@@ -1,17 +1,28 @@
 import { initializeApp } from 'firebase/app';
-import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit, doc, setDoc, getDoc, getCountFromServer, increment, where } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, orderBy, limit, doc, setDoc, getDoc, getCountFromServer, increment, where } from 'firebase/firestore';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut as fbSignOut, onAuthStateChanged } from 'firebase/auth';
 import type { User } from 'firebase/auth';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAxFoEnQCH5rW4O_M7UYb_v5IXgOo4uxV0",
-  authDomain: "gcc-sae.firebaseapp.com",
-  projectId: "gcc-sae",
-  storageBucket: "gcc-sae.firebasestorage.app",
-  messagingSenderId: "11093208087",
-  appId: "1:11093208087:web:2972e4659049f7707f4052",
-  measurementId: "G-VB8J130T1R"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
+
+const missingFirebaseEnv = Object.entries(firebaseConfig)
+  .filter(([key, value]) => key !== 'measurementId' && !value)
+  .map(([key]) => key);
+
+if (missingFirebaseEnv.length > 0) {
+  throw new Error(
+    `Missing Firebase environment variables: ${missingFirebaseEnv.join(', ')}. ` +
+      'Create a local .env.local file using .env.example as a template.'
+  );
+}
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
